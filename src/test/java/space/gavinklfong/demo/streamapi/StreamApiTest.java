@@ -15,10 +15,12 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
 import space.gavinklfong.demo.streamapi.models.Customer;
 import space.gavinklfong.demo.streamapi.models.Order;
 import space.gavinklfong.demo.streamapi.models.Product;
@@ -26,9 +28,10 @@ import space.gavinklfong.demo.streamapi.repos.CustomerRepo;
 import space.gavinklfong.demo.streamapi.repos.OrderRepo;
 import space.gavinklfong.demo.streamapi.repos.ProductRepo;
 
-@Slf4j
 @DataJpaTest
 public class StreamApiTest {
+
+	private static final Logger log = LoggerFactory.getLogger(StreamApiTest.class);
 
 	@Autowired
 	private CustomerRepo customerRepo;
@@ -188,7 +191,7 @@ public class StreamApiTest {
 				.peek(o -> System.out.println(o.toString()))
 				.flatMap(o -> o.getProducts().stream())
 				.distinct()
-				.collect(Collectors.toList());
+				.toList();
 
 		long endTime = System.currentTimeMillis();
 		log.info(String.format("exercise 7 - execution time: %1$d ms", (endTime - startTime)));

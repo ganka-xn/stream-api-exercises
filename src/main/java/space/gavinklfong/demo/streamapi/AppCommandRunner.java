@@ -1,18 +1,21 @@
 package space.gavinklfong.demo.streamapi;
 
-import lombok.extern.slf4j.Slf4j;
+//import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import space.gavinklfong.demo.streamapi.repos.CustomerRepo;
 import space.gavinklfong.demo.streamapi.repos.OrderRepo;
 import space.gavinklfong.demo.streamapi.repos.ProductRepo;
 
-import javax.transaction.Transactional;
-
-@Slf4j
+//@Slf4j
 @Component
 public class AppCommandRunner implements CommandLineRunner {
+
+	private static final Logger log = LoggerFactory.getLogger(AppCommandRunner.class);
 
 	@Autowired
 	private CustomerRepo customerRepos;
@@ -38,5 +41,4 @@ public class AppCommandRunner implements CommandLineRunner {
 		productRepos.findAll()
 				.forEach(p -> log.info(p.toString()));
 	}
-
 }

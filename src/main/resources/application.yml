@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    #    url: jdbc:h2:file:./data/testdb  # Файл в папке проекта
+    #    url: jdbc:h2:mem:testdb  # In-memory
+    url: jdbc:h2:file:./data/testdb;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ''
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # Отключаем автоматическое создание Hibernate
+#      ddl-auto: update  # Измените на update для сохранения данных
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true  # Разрешаем внешние подключения
+
+  sql:
+    init:
+      mode: always  # Всегда инициализировать БД
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true  # Продолжать при ошибках
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate: INFO
+    org.springframework: INFO
