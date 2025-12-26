@@ -1,3 +1,9 @@
+-- Удаление таблиц в правильном порядке (с учетом зависимостей внешних ключей)
+DROP TABLE IF EXISTS order_product_relationship;
+DROP TABLE IF EXISTS product_orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS customers;
+
 -- Создание таблиц с именами, которые используются в data.sql и моделях
 CREATE TABLE IF NOT EXISTS customers
 (
