@@ -8,10 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import space.gavinklfong.demo.streamapi.models.Product;
 import space.gavinklfong.demo.streamapi.repos.ProductRepo;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +29,7 @@ public class ProductService {
     }
 
     /**
-     * Упражнение 2: Получить список товаров категории "Baby"
+     * Упражнение 2: Получить список товаров по категории
      */
     public List<Product> getProductsByCategory(String category) {
         return productRepo.findAll().stream()
@@ -41,7 +38,7 @@ public class ProductService {
     }
 
     /**
-     * Упражнение 3: Получить список товаров категории "Toys" со скидкой 10%
+     * Obtain a list of product with category and then apply 10% discount
      */
     public List<Product> getProductsByCategoryWithDiscount(String category, Double discount) {
         return productRepo.findAll().stream()
@@ -70,6 +67,17 @@ public class ProductService {
         return productRepo.findAll().stream()
                 .filter(product -> category.equalsIgnoreCase(product.getCategory()))
                 .max(Comparator.comparingDouble(Product::getPrice));
+    }
+
+    /**
+     * Get map of the most expensive product by category
+     */
+    public Map<String, Optional<Product>> getMostExpensiveProductsByCategories() {
+        return productRepo.findAll().stream()
+                .collect(Collectors.groupingBy(
+                        Product::getCategory,
+                        Collectors.maxBy(Comparator.comparing(Product::getPrice))
+                ));
     }
 
     /**
@@ -112,23 +120,69 @@ public class ProductService {
     }
 
     /**
-     * Obtain a data map with list of product name by category
-     */
-
-    /**
-     * Получить статистику по ценам в категории
+     * Получить статистику по ценам товаров в категории
+     * <p>
      * Obtain a collection of statistic figures (i.e. sum, average, max, min, count) for all products of category
      */
+    public Map<String, Double> getPriceStatsInCategory(String category) {
+        DoubleSummaryStatistics stat = productRepo.findAll().stream()
+                .filter(product -> category.equalsIgnoreCase(product.getCategory()))
+                .mapToDouble(Product::getPrice)
+                .summaryStatistics();
+        return Map.of(
+                "sum", stat.getSum(),
+                "count", (double) stat.getCount(),
+                "min", stat.getMin(),
+                "max", stat.getMax(),
+                "average", stat.getAverage()
+        );
+//        List<Product> products = productRepo.findAll().stream()
+//                .filter(product -> category.equalsIgnoreCase(product.getCategory()))
+//                .toList();
+//
+//        Map<String, Double> stat = new HashMap<>();
+//        stat.put("sum", products.stream().mapToDouble(Product::getPrice).sum());
+//        stat.put("average", products.stream().mapToDouble(Product::getPrice).average().orElse(0));
+//        stat.put("max", products.stream().mapToDouble(Product::getPrice).max().orElse(0));
+//        stat.put("min", products.stream().mapToDouble(Product::getPrice).min().orElse(0));
+//        stat.put("count", (double) products.size());
+//
+//        return stat;
+    }
 
     /**
      * Поиск товаров по названию (частичное совпадение)
      */
+    public List<Product> searchProductsByName(String name) {
+        return productRepo.findAll().stream()
+                .filter(product -> product.getName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
+    }
 
     /**
      * Получить товары в ценовом диапазоне
      */
+    public List<Product> getProductsInPriceRange(double minPrice, double maxPrice) {
+        return productRepo.findAll().stream()
+                .filter(product -> product.getPrice() <= maxPrice && product.getPrice() >= minPrice)
+                .toList();
+    }
+
+    /**
+     * Получить список всех категорий
+     */
+    public List<String> getProductsCategories() {
+        return productRepo.findAll().stream()
+                .map(Product::getCategory)
+                .distinct().toList();
+    }
 
     /**
      * Получить количество товаров в каждой категории
      */
+    public Map<String, Long> countProductsByCategory() {
+        return productRepo.findAll().stream()
+                .collect(Collectors.groupingBy(Product::getCategory, Collectors.counting()));
+    }
+
 }
